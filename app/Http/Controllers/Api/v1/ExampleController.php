@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
+
+use App\Http\Controllers\Controller;
 
 class ExampleController extends Controller
 {
@@ -11,8 +13,10 @@ class ExampleController extends Controller
      */
     public function __construct()
     {
-        //
+        
     }
 
-    //
+    public function responseExample(){
+        return 123;
+    }
 }
