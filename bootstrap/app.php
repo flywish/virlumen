@@ -100,6 +100,7 @@ $app->singleton(
 */
 
 $app->configure('app');
+$app->configure('api');
 $app->configure('auth');
 
 /*

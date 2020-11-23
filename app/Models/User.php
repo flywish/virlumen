@@ -9,6 +9,7 @@ use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+
 class User extends Model implements AuthenticatableContract, JWTSubject
 {
     #use Notifiable;

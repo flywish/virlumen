@@ -2,12 +2,14 @@
 
 $api = app('Dingo\Api\Routing\Router');
 
-$api->version(['v1', 'v2'], ['namespace' => 'App\Http\Controllers\Api'], function ($router) {
-    $router->group(['prefix' => 'example'], function ($router) {
-        $router->get('test', 'V1\ExampleController@test');
-
-        $router->get('response', 'V1\ExampleController@response');
-        $router->get('throttle', 'V1\ExampleController@throttle');
+$api->version(['v1', 'v2'], ['namespace' => 'App\Http\Controllers\Api'], function ($api) {
+    $api->group(['prefix' => 'example'], function ($api) {
+        $api->post('success', 'V1\ExampleController@successExample');
+        $api->post('error', 'V1\ExampleController@errorExample');
+        $api->post('paginator', 'V1\ExampleController@paginatorExample');
+        $api->group(['middleware' => 'api.throttle', 'limit' => 10, 'expires' => 1], function($api){
+            $api->post('throttle', 'V1\ExampleController@throttleExample');
+        });
     });
 });
 
