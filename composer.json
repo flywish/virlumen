@@ -7,10 +7,10 @@
     "require": {
         "php": "^7.3|^8.0",
         "dingo/api": "^3.0",
-        "godruoyi/dingo-api-helper": "^1.0",
         "laravel/lumen-framework": "^8.0",
         "palanik/lumen-cors": "^0.0.3",
-        "tymon/jwt-auth": "^1.0"
+        "tymon/jwt-auth": "^1.0",
+        "viest/php-ext-xlswriter-ide-helper": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.9.1",
@@ -41,8 +41,6 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "pre-install-cmd": "Installer\\Script::install",
-        "pre-update-cmd": "Installer\\Script::install",
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ]

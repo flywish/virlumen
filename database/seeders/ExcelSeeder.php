@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Excel;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class ExcelSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,6 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(ExcelSeeder::class);
+        Excel::factory()
+            ->times(100000)
+            ->create();
     }
 }
