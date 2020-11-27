@@ -36,7 +36,7 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         if ($this->auth->guard($guard)->guest()) {
-            return response('尚未登录', 401);
+            return response('登录失效', 401);
         }
 
         return $next($request);

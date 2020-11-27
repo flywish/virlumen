@@ -15,11 +15,13 @@ $api->version(['v1', 'v2'], ['namespace' => 'App\Http\Controllers\Api'], functio
 
 // 用户登录相关
 $api->version('v1', ['namespace' => 'App\Http\Controllers\Api\V1\Auth'], function ($api) {
-    $api->group(['middleware' => 'auth', 'prefix' => 'auth'], function ($api) {
+    $api->group(['prefix' => 'user'], function ($api) {
         $api->post('login', 'AuthController@login');
-        $api->post('logout', 'AuthController@logout');
-        $api->post('refresh', 'AuthController@refresh');
-        $api->post('me', 'AuthController@me');
+        $api->group(['middleware' => 'auth'], function($api){
+            $api->post('logout', 'AuthController@logout');
+            $api->post('refresh', 'AuthController@refresh');
+            $api->post('me', 'AuthController@me');
+        });
     });
 });
 

@@ -44,7 +44,7 @@ return [
     ],
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',//这里是因为我用的mysql做的测试
+            'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
     ],

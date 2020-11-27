@@ -1,23 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1\Auth;
 
+use App\Http\Controllers\Api\ApiBaseController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AuthController extends Controller
+class AuthController extends ApiBaseController
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        #这个句是官方提供的，还没有验证是否有效
-        $this->middleware('auth:api', ['except' => ['login']]);
-    }
-
     /**
      * Get a JWT token via given credentials.
      *
@@ -28,7 +19,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-        if ($token = $this->guard()->attempt($credentials)) {
+        if ($token = Auth::guard()->attempt($credentials)) {
             return $this->respondWithToken($token);
         }
         return response()->json(['error' => 'Unauthorized'], 401);
@@ -41,7 +32,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json($this->guard()->user());
+        return response()->json(Auth::guard()->user());
     }
 
     /**
@@ -51,7 +42,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        $this->guard()->logout();
+        Auth::guard()->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
     }
@@ -63,7 +54,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken($this->guard()->refresh());
+        return $this->respondWithToken(Auth::guard()->refresh());
     }
 
     /**
@@ -78,17 +69,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => $this->guard()->factory()->getTTL() * 60
+            'expires_in' => Auth::guard()->factory()->getTTL() * 60
         ]);
-    }
-
-    /**
-     * Get the guard to be used during authentication.
-     *
-     * @return \Illuminate\Contracts\Auth\Guard
-     */
-    public function guard()
-    {
-        return Auth::guard();
     }
 }
