@@ -103,6 +103,11 @@ $app->configure('app');
 $app->configure('api');
 $app->configure('auth');
 
+$app->configure('mail');
+$app->alias('mailer', Illuminate\Mail\Mailer::class);
+$app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
+$app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -138,8 +143,15 @@ $app->configure('auth');
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
+
+
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
+
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+
+// laravel-log-viewer
+$app->register(Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

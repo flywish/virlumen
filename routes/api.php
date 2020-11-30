@@ -31,4 +31,6 @@ $api->version('v1', ['namespace' => 'App\Http\Controllers\Api\V1'], function ($a
         $api->get('excel_export', 'ComponentController@exportExcel');
         $api->get('excel_read', 'ComponentController@readExcel');
     });
+    $api->post('redis_set', 'RedisController@setRedis');
+    $api->post('redis_get', 'RedisController@getRedis');
 });
