@@ -11,10 +11,7 @@ class Script
         $installer = new OptionalPackages($event->getIO(), $event->getComposer());
 
         $installer->io->write('<info>Setting up optional packages</info>');
-
-        $installer->setupRuntimeDir();
-        $installer->removeDevDependencies();
-        $installer->installHyperfScript();
+        $installer->setDefaultTimezone();
         $installer->promptForOptionalPackages();
         $installer->updateRootPackage();
         $installer->removeInstallerFromDefinition();

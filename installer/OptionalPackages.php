@@ -14,6 +14,7 @@ use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
+
 class OptionalPackages
 {
     /**
@@ -110,47 +111,23 @@ class OptionalPackages
         $this->installerSource = realpath(__DIR__) . '/';
     }
 
-    public function installHyperfScript()
+    /**
+     * 设置默认时区
+     */
+    public function setDefaultTimezone()
     {
         $ask[] = "\n  <question>What time zone do you want to setup ?</question>\n";
         $ask[] = "  [<comment>n</comment>] Default time zone for php.ini\n";
-        $ask[] = "Make your selection or type a time zone name, like Asia/Shanghai (n):\n";
+        $ask[] = "Make your selection or type a time zone name, like PRC (n):\n";
         $answer = $this->io->ask(implode('', $ask), 'n');
 
-        $content = file_get_contents($this->installerSource . '/resources/bin/hyperf.stub');
         if ($answer != 'n') {
-            $content = str_replace('%TIME_ZONE%', $answer, $content);
-            file_put_contents($this->projectRoot . '/bin/hyperf.php', $content);
-        }
-    }
-
-    /**
-     * Create data and cache directories, if not present.
-     *
-     * Also sets up appropriate permissions.
-     */
-    public function setupRuntimeDir(): void
-    {
-        $this->io->write('<info>Setup data and cache dir</info>');
-        $runtimeDir = $this->projectRoot . '/runtime';
-
-        if (! is_dir($runtimeDir)) {
-            mkdir($runtimeDir, 0775, true);
-            chmod($runtimeDir, 0775);
-        }
-    }
-
-    /**
-     * Cleanup development dependencies.
-     *
-     * The dev dependencies should be removed from the stability flags,
-     * require-dev and the composer file.
-     */
-    public function removeDevDependencies(): void
-    {
-        $this->io->write('<info>Removing installer development dependencies</info>');
-        foreach ($this->devDependencies as $devDependency) {
-            unset($this->stabilityFlags[$devDependency], $this->composerDevRequires[$devDependency], $this->composerDefinition['require-dev'][$devDependency]);
+            $content = file_get_contents($this->projectRoot . '.env');
+            if ($answer != 'n') {
+                $preg = '/APP_TIMEZONE=(.*?)\n/';
+                $content = preg_replace($preg, 'APP_TIMEZONE=' . $answer . PHP_EOL, $content);
+                file_put_contents($this->projectRoot . '.env', $content);
+            }
         }
     }
 
@@ -253,14 +230,19 @@ class OptionalPackages
             }
             // Copy files
             if (isset($question['options'][$answer])) {
-                $force = ! empty($question['force']);
+                $force = !empty($question['force']);
                 foreach ($question['options'][$answer]['resources'] as $resource => $target) {
                     $this->copyResource($resource, $target, $force);
                 }
             }
+            // Modify env file
+            // TODO :: 编辑env 文件
+            if(isset($question['options'][$answer]) && isset($question['options'][$answer]['env'])){
+                $this->modifyEnv($question['options'][$answer]['env']);
+            }
             return true;
         }
-        if ($question['custom-package'] === true && preg_match(self::PACKAGE_REGEX, (string) $answer, $match)) {
+        if ($question['custom-package'] === true && preg_match(self::PACKAGE_REGEX, (string)$answer, $match)) {
             $this->addPackage($match['name'], $match['version'], []);
             if (isset($question['custom-package-warning'])) {
                 $this->io->write(sprintf('  <warning>%s</warning>', $question['custom-package-warning']));
@@ -314,7 +296,7 @@ class OptionalPackages
         }
         // Whitelist packages for the component installer
         foreach ($whitelist as $package) {
-            if (! in_array($package, $this->composerDefinition['extra']['zf']['component-whitelist'], true)) {
+            if (!in_array($package, $this->composerDefinition['extra']['zf']['component-whitelist'], true)) {
                 $this->composerDefinition['extra']['zf']['component-whitelist'][] = $package;
                 $this->io->write(sprintf('  - Whitelist package <info>%s</info>', $package));
             }
@@ -335,7 +317,7 @@ class OptionalPackages
             return;
         }
         $destinationPath = dirname($this->projectRoot . $target);
-        if (! is_dir($destinationPath)) {
+        if (!is_dir($destinationPath)) {
             mkdir($destinationPath, 0775, true);
         }
         $this->io->write(sprintf('  - Copying <info>%s</info>', $target));
@@ -402,14 +384,14 @@ class OptionalPackages
             : sprintf('  Make your selection <comment>(%s)</comment>: ', $defaultText);
         while (true) {
             // Ask for user input
-            $answer = $this->io->ask(implode($ask), (string) $defaultOption);
+            $answer = $this->io->ask(implode($ask), (string)$defaultOption);
             // Handle none of the options
             if ($answer === 'n' && $question['required'] !== true) {
                 return 'n';
             }
             // Handle numeric options
-            if (is_numeric($answer) && isset($question['options'][(int) $answer])) {
-                return (int) $answer;
+            if (is_numeric($answer) && isset($question['options'][(int)$answer])) {
+                return (int)$answer;
             }
             // Handle string options
             if (isset($question['options'][$answer])) {
@@ -419,7 +401,7 @@ class OptionalPackages
             if ($question['custom-package'] === true && preg_match(self::PACKAGE_REGEX, $answer, $match)) {
                 $packageName = $match['name'];
                 $packageVersion = $match['version'];
-                if (! $packageVersion) {
+                if (!$packageVersion) {
                     $this->io->write('<error>No package version specified</error>');
                     continue;
                 }
@@ -443,7 +425,7 @@ class OptionalPackages
      */
     private function recursiveRmdir(string $directory): void
     {
-        if (! is_dir($directory)) {
+        if (!is_dir($directory)) {
             return;
         }
         $rdi = new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS);
@@ -485,5 +467,19 @@ class OptionalPackages
         $this->composerDevRequires = $this->rootPackage->getDevRequires();
         // Get stability flags
         $this->stabilityFlags = $this->rootPackage->getStabilityFlags();
+    }
+
+    /**
+     * 修改env文件
+     * @param array $data
+     */
+    private function modifyEnv(array $data)
+    {
+        $envPath = __DIR__ . '/../.env';
+        foreach ($data as $key => $value){
+            $content[] = $key . '=' . $value;
+        }
+        $content = "\n\n" . implode($content, "\n");
+        file_put_contents($envPath, $content, 8);
     }
 }
