@@ -33,4 +33,6 @@ $api->version('v1', ['namespace' => 'App\Http\Controllers\Api\V1'], function ($a
     });
     $api->post('redis_set', 'RedisController@setRedis');
     $api->post('redis_get', 'RedisController@getRedis');
+
+    $api->get('swagger', 'SwaggerController@index');
 });

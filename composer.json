@@ -6,14 +6,14 @@
     "type": "project",
     "require": {
         "php": "^7.3|^8.0",
+        "darkaonline/swagger-lume": "8.*",
         "dingo/api": "^3.0",
         "illuminate/mail": "^8.16",
         "illuminate/redis": "^8.16",
         "laravel/lumen-framework": "^8.0",
         "palanik/lumen-cors": "^0.0.3",
         "rap2hpoutre/laravel-log-viewer": "^1.7",
-        "tymon/jwt-auth": "^1.0",
-        "viest/php-ext-xlswriter-ide-helper": "dev-master"
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.9.1",

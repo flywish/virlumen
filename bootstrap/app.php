@@ -102,6 +102,7 @@ $app->singleton(
 $app->configure('app');
 $app->configure('api');
 $app->configure('auth');
+$app->configure('swagger-lume');
 
 $app->configure('mail');
 $app->alias('mailer', Illuminate\Mail\Mailer::class);
@@ -152,6 +153,9 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 
 // laravel-log-viewer
 $app->register(Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class);
+
+// swageger
+$app->register(SwaggerLume\ServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
